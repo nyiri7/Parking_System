@@ -8,7 +8,9 @@ CREATE TABLE Car (
     id INTEGER PRIMARY KEY AUTOINCREMENT,
     license_plate TEXT NOT NULL,
     model TEXT,
-    brand TEXT
+    brand TEXT,
+    user_id INTEGER NOT NULL,
+    FOREIGN KEY (user_id) REFERENCES User(id)
 );
 
 CREATE TABLE ParkingSpotType (
