@@ -1,0 +1,85 @@
+# ==========================================
+# .NET Build and Publish Outputs
+# ==========================================
+[Bb]in/
+[Oo]bj/
+[Oo]ut/
+TestResults/
+*.TestResults/
+[Dd]ebug/
+[Rr]elease/
+*.trx
+*.mdmp
+*.lcov
+coverage.info
+
+# ==========================================
+# Visual Studio Code
+# ==========================================
+.vscode/*
+!.vscode/settings.json
+!.vscode/tasks.json
+!.vscode/launch.json
+!.vscode/extensions.json
+*.code-workspace
+
+# Local History for Visual Studio Code
+.history/
+
+# ==========================================
+# Environment / Secrets
+# ==========================================
+# Ignore local environment variables (if you use tools like dotenv in .NET)
+.env
+.env.local
+.env.development
+appsettings.Development.json
+appsettings.Local.json
+secrets.json
+
+# ==========================================
+# Dependencies & Caches
+# ==========================================
+*.suo
+*.user
+*.sln.docstates
+.vs/
+.idea/
+.ionide/
+# NuGet
+*.nupkg
+*.snupkg
+**/packages/
+!**/packages/build/
+*.nuget.props
+*.nuget.targets
+project.lock.json
+project.fragment.lock.json
+artifacts/
+
+# ==========================================
+# OS Generated Files
+# ==========================================
+# Windows
+Thumbs.db
+ehthumbs.db
+Desktop.ini
+$RECYCLE.BIN/
+*.cab
+*.msi
+*.msm
+*.msp
+*.lnk
+
+# macOS
+.DS_Store
+.AppleDouble
+.LSOverride
+._*
+.Trashes
+
+# Linux
+*~
+.directory
+.Trash-*
+.nfs*
