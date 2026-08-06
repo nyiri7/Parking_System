@@ -69,8 +69,7 @@ namespace ParkingAPI.Controllers
             _context.Cars.Add(car);
             await _context.SaveChangesAsync();
             carDto.Id = car.Id;
-
-            return CreatedAtAction(nameof(GetCar), new { id = car.Id }, carDto);
+            return StatusCode(201, carDto);
         }
 
         [HttpDelete("{id}")]
@@ -85,7 +84,7 @@ namespace ParkingAPI.Controllers
             _context.Cars.Remove(car);
             await _context.SaveChangesAsync();
 
-            return NoContent();
+            return Ok("Car deleted successfully.");
         }
     }
 }
