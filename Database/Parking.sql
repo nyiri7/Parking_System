@@ -1,7 +1,8 @@
 CREATE TABLE User (
     id INTEGER PRIMARY KEY AUTOINCREMENT,
     email TEXT NOT NULL UNIQUE,
-    password TEXT NOT NULL 
+    password TEXT NOT NULL,
+    role TEXT NOT NULL
 );
 
 CREATE TABLE Car (
