@@ -43,7 +43,8 @@ namespace ParkingAPI.Controllers
             User user = new User
             {
                 Email = userInp.Email,
-                Password = userInp.Password
+                Password = userInp.Password,
+                Role = "User"
             };
             user.Password = pwdService.HashPassword(userInp.Password);
             _context.Users.Add(user);
