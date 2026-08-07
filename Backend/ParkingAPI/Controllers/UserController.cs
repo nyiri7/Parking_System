@@ -13,6 +13,8 @@ namespace ParkingAPI.Controllers
         private readonly ParkingDbContext _context;
         private readonly PasswordService pwdService = new PasswordService();
 
+        private readonly TokenService tokenService;
+
         public UserController(ParkingDbContext context)
         {
             _context = context;
@@ -63,7 +65,8 @@ namespace ParkingAPI.Controllers
             {
                 return Unauthorized("Invalid email or password.");
             }
-            return Ok("Login successful.");
+
+            return Ok(new {token = tokenService.GenerateToken(existingUser.Id.ToString(), existingUser.Email, existingUser.Role)});
         }
     }
 }
