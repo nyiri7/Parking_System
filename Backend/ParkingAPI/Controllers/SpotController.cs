@@ -1,3 +1,4 @@
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using ParkingAPI.Data;
@@ -29,11 +30,13 @@ namespace ParkingAPI.Controllers
         }
 
         [HttpGet]
+        [Authorize(Roles = "Admin")]
         public async Task<ActionResult<IEnumerable<SpotCountDTO>>> GetAllSpots()
         {
             return await GetSpotCounts();
         }
         [HttpPost]
+        [Authorize(Roles = "Admin")]
         public async Task<ActionResult<String>> ModifySpots(List<SpotCountDTO> spotCountDTOinp)
         {
             var currentSpotsInDB = await GetSpotCounts();
@@ -80,9 +83,58 @@ namespace ParkingAPI.Controllers
                     }));
                 }
             }
+            await _context.SaveChangesAsync();
             return Ok("Spot counts modified successfully.");
         }
 
+        [HttpPost("SpotType")]
+        [Authorize(Roles = "Admin")]
+        public async Task<ActionResult<String>> AddSpotType(SpotTypeDTO spotTypeDTOinp)
+        {
+            var existingType = await _context.ParkingSpotTypes.FirstOrDefaultAsync(s => s.Type == spotTypeDTOinp.Type);
+            if (existingType != null)
+            {
+                return Conflict("Spot type already exists.");
+            }
+
+            var newSpotType = new ParkingSpotType
+            {
+                Type = spotTypeDTOinp.Type
+            };
+            _context.ParkingSpotTypes.Add(newSpotType);
+            await _context.SaveChangesAsync();
+
+            return Ok("Spot type added successfully.");
+        }
+
+        [HttpDelete("SpotType/{id}")]
+        [Authorize(Roles = "Admin")]
+        public async Task<ActionResult<String>> DeleteSpotType(int id)
+        {
+            var spotType = await _context.ParkingSpotTypes.FindAsync(id);
+            if (spotType == null)
+            {
+                return NotFound("Spot type not found.");
+            }
+
+            var associatedSpots = await _context.ParkingSpots.Where(s => s.TypeId == id).ToListAsync();
+            if (associatedSpots.Any())
+            {
+                return BadRequest("Cannot delete spot type with associated parking spots.");
+            }
+
+            _context.ParkingSpotTypes.Remove(spotType);
+            await _context.SaveChangesAsync();
+
+            return Ok("Spot type deleted successfully.");
+        }
+
+        [HttpGet("SpotType")]
+        [Authorize(Roles = "Admin")]
+        public async Task<ActionResult<IEnumerable<ParkingSpotType>>> GetSpotTypes()
+        {
+            return await _context.ParkingSpotTypes.ToListAsync();
+        }
 
     }
 }

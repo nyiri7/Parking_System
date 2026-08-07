@@ -1,0 +1,1 @@
+UPDATE User SET Role = 'Admin' WHERE Email = 'Admin';

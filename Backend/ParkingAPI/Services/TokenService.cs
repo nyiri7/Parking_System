@@ -7,6 +7,7 @@ public interface ITokenService
 {
     string GenerateToken(string userId, string username, string role);
     ClaimsPrincipal? ValidateToken(string token);
+    string? GetUserIdFromToken(string token);
 }
 
 
@@ -73,5 +74,20 @@ public class TokenService : ITokenService
         {
             return null;
         }
+    }
+
+    public string? GetUserIdFromToken(string token)
+    {
+        var principal = ValidateToken(token);
+        
+        if (principal == null)
+        {
+            return null;
+        }
+
+        var userIdClaim = principal.FindFirst(ClaimTypes.NameIdentifier) 
+                        ?? principal.FindFirst(JwtRegisteredClaimNames.Sub);
+
+        return userIdClaim?.Value;
     }
 }

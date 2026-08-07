@@ -1,3 +1,4 @@
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using ParkingAPI.Data;
@@ -13,11 +14,12 @@ namespace ParkingAPI.Controllers
         private readonly ParkingDbContext _context;
         private readonly PasswordService pwdService = new PasswordService();
 
-        private readonly TokenService tokenService;
+        private readonly TokenService _tokenService;
 
-        public UserController(ParkingDbContext context)
+        public UserController(ParkingDbContext context , TokenService tokenService)
         {
             _context = context;
+            _tokenService = tokenService;
         }
 
         private async Task<ActionResult<User>> GetUser(int id)
@@ -34,6 +36,7 @@ namespace ParkingAPI.Controllers
 
         
         [HttpPost]
+        [AllowAnonymous]
         public async Task<ActionResult<String>> CreateUser(UserRegDTO userInp)
         {
             bool userExists = await _context.Users.Where(u => u.Email == userInp.Email).AnyAsync();
@@ -56,6 +59,7 @@ namespace ParkingAPI.Controllers
         }
 
         [HttpPost("login")]
+        [AllowAnonymous]
         public async Task<ActionResult<String>> LoginUser(UserLoginDTO userLogin)
         {
             var existingUser = await _context.Users
@@ -66,7 +70,30 @@ namespace ParkingAPI.Controllers
                 return Unauthorized("Invalid email or password.");
             }
 
-            return Ok(new {token = tokenService.GenerateToken(existingUser.Id.ToString(), existingUser.Email, existingUser.Role)});
+
+            if (_tokenService == null) 
+            {
+                return StatusCode(500, "tokenService is null");
+            }
+
+            if (existingUser.Id == null) 
+            {
+                return StatusCode(500, "existingUser.Id is null");
+            }
+
+            if (existingUser.Email == null)
+            {
+                                return StatusCode(500, "existingUser.Email is null");
+            }
+
+
+            if (existingUser.Role == null)
+            {
+                                return StatusCode(500, "existingUser.Role is null");
+            }
+
+
+            return Ok(new {token = _tokenService.GenerateToken(existingUser.Id.ToString(), existingUser.Email, existingUser.Role)});
         }
     }
 }
